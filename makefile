@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-I. -fopenmp
+CFLAGS=-I.
 APP=ASTAR
 
 build: main.o

@@ -1,100 +1,68 @@
 #include <stdio.h> 
 #include <stdlib.h>
-#include <conio.h>  
-#include <dos.h>
-struct Path
+#include <string.h>
+#include <ctype.h>
+typedef struct 
 {
 	char Start;
 	char Finish;
-};
-struct Edges
+}Path;
+
+typedef struct
 {
 	char From;
 	char to;
 	int cost;
-};
-struct Node
+}Edges;
+
+typedef struct 
 {
-	int x = 0;
-	int y = 0;
-	char id = ""[0];
-	int numPaths = 0;;
+	int x;
+	int y;
+	char id;
+	int numPaths;
 	Edges * paths;
-};
-
-void loadFile()
+}Node;
+Node createNode(char * line)
 {
-	char line[5];
-	char mode[5];
-	int number = 0;
+	Node newNode; 
+	char id;
 	int step = 0;
-	struct Path * paths;
-	int totalpaths = 0;
-	struct Node * nodes;
-	FILE* data = fopen("test.txt", "rt");
-	STEP s;
-	while(fgets(line, 5, data) != NULL)
+	char num[10]
+	int idLength = 0
+	int i = 0;
+	int bool = 0;
+	for(i = 0; i < 5; i++)
 	{
-
-		if(line == "NODES" || line == "EDGES" || line == "EDGES" )
+		if(isdigit(line[i]))
 		{
-			mode = line;
+			num[step] = line[i];
 		}
-		else if(mode == "NODES")
+		else if(isblank(line[i]))
 		{
-			nodes[step] = createNode(line);
-			step++;
-		}
-		else if(mode == "EDGES")
-		{
-			nodes = addEdges(line,step,nodes);
-		}
-		else if(mode == "PATHS")
-		{
-			
-			struct Path pathArr[totalpaths+1];
-			struct Path newPath = createPath(line);
-			for(int j = 0; j < totalpaths; j++)
+			if(bool == 0)
 			{
-				 pathArr[j] = paths[j];
+
 			}
-			totalpaths++;
-			pathArr[totalpaths] = newPath;
-			paths =  pathArr;
+			else if(bool == 1)
+			{
+
+			}
 		}
-		else if(number == 0)
+		else
 		{
-			number = atoi(line[0]);
-			nodes = Node[number];
-		}
-	}
-	
-};
-struct Node createNode(char * line)
-{
-	struct Node newNode;  
-	for(int i = 0; i < 5; i+=2)
-	{
-		if(i == 0)
-		{
-			newNode.id = line[i];
-		}
-		else if(i == 2)
-		{
-			newNode.x = atoi(line[i]);
-		}
-		else if(i == 4)
-		{
-			newNode.y = atoi(line[i]);
+
 		}
 	}
 
 	return newNode;
 };
-struct Node * addEdges(char * line,int NodeNum, struct Node * nodes)
+
+Node * addEdges(char * line,int NodeNum, Node * nodes)
 {
-	struct Edges newPath;  
-	for(int i = 0; i < 5; i+=2)
+	Edges newPath; 
+	int i = 0;
+	for(i = 0; i < 5; i+=2)
 	{
 		if(i == 0)
 		{
@@ -106,24 +74,23 @@ struct Node * addEdges(char * line,int NodeNum, struct Node * nodes)
 		}
 		else if(i == 4)
 		{
-			newPath.cost = atoi(line[i]);
+			newPath.cost = atoi(&line[i]);
 		}
 	}
-
-	for(int i = 0; i < NodeNum; i+=2)
+	for(i = 0; i < NodeNum; i+=2)
 	{
 		if( nodes[i].id == newPath.From)
 		{
 			int paths = 1;
 			
-			int paths += nodes[i].numPaths;
-			struct Edges edgeArr[paths];
-
-			for(int j = 0; j < nodes[i].numPaths; j++)
+			paths = paths + nodes[i].numPaths;
+			Edges edgeArr[paths];
+			int j = 0;
+			for(j = 0; j < nodes[i].numPaths; j++)
 			{
 				 edgeArr[j] = nodes[i].paths[j];
 			}
-			 edgeArr[paths-1] = newPath
+			edgeArr[paths-1] = newPath;
 
 			nodes[i].numPaths++;
 			
@@ -132,10 +99,11 @@ struct Node * addEdges(char * line,int NodeNum, struct Node * nodes)
 	}
 	return  nodes;
 };
-struct Path createPath(char * line)
+Path createPath(char * line)
 {
-	struct Path newPath;
-	for(int i = 0; i < 3; i=2)
+	Path newPath;
+	int i = 0;
+	for(i = 0; i < 3; i=2)
 	{
 		if(i == 0)
 		{
@@ -148,3 +116,51 @@ struct Path createPath(char * line)
 		
 	}
 }
+void loadFile()
+{
+	char line[100];
+	char mode[100];
+	int number = 0;
+	int step = 0;
+	Path * paths;
+	int totalpaths = 0;
+	Node * nodes;
+	FILE* data = fopen("test.txt", "rt");
+	while(fgets(line, 100, data) != NULL)
+	{
+		if(strncmp(line, "NODES", 5) == 0 ||  strncmp(line, "EDGES", 5) == 0 || strncmp(line, "PATHS", 5) == 0 )
+		{
+			 strcpy(mode, line);
+		}
+		else if(strncmp(mode, "NODES", 5) ==0)
+		{
+			nodes[step] = createNode(line);
+			step++;
+		}
+		else if(strncmp(mode, "EDGES", 5) == 0)
+		{
+			nodes = addEdges(line,step,nodes);
+		}
+		else if(strncmp(mode, "PATHS", 5) == 0)
+		{
+			
+			Path pathArr[totalpaths+1];
+			Path newPath = createPath(line);
+			int j = 0;
+			for(j = 0; j < totalpaths; j++)
+			{
+				 pathArr[j] = paths[j];
+			}
+			totalpaths++;
+			pathArr[totalpaths] = newPath;
+			paths =  pathArr;
+		}
+		else if(number == 0)
+		{
+			number = atoi(&line[0]);
+			Node temp[number];
+			nodes = temp;
+		}
+	}
+	
+};
