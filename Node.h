@@ -19,43 +19,76 @@ typedef struct
 {
 	int x;
 	int y;
-	char id;
+	char id[100];
 	int numPaths;
 	Edges * paths;
 }Node;
-Node createNode(char * line)
+
+void createNode(char * line, Node * newNode)
 {
-	Node newNode; 
-	char id;
 	int step = 0;
-	char num[10]
-	int idLength = 0
-	int i = 0;
+	char num[100];
+	char nodeid[100];
+	int boolX = 0;
+	int strlenght = 0;
 	int bool = 0;
-	for(i = 0; i < 5; i++)
+	int j = 0;
+	
+	for(j = 0; j <= 100; j++)
 	{
-		if(isdigit(line[i]))
+		nodeid[j] = ' ';
+		num[j] = ' ';
+		newNode->id[j] = ' ';
+	}
+	int i = 0;
+	for(i = 0; i < strlen(line); i++)
+	{
+		if(isspace(line[i]))
 		{
-			num[step] = line[i];
-		}
-		else if(isblank(line[i]))
-		{
-			if(bool == 0)
+		
+			if(bool == 1) 
 			{
-
+				int cordNum = atoi(num);
+				if(boolX == 1)
+				{
+					newNode->y = cordNum;
+					boolX = 0;
+				}
+				else
+				{
+					newNode->x = cordNum;
+					boolX = 1;
+					for(j = 0; j <= step; j++)
+					{
+						num[j] = ' ';
+					}
+				}
+				bool = 0;
 			}
-			else if(bool == 1)
+			else
 			{
-
+				
+				strncpy(newNode->id,nodeid,strlenght);
+				strlenght = 0;
 			}
+			step = 0;
 		}
-		else
+		else if(isdigit(line[i]))
 		{
-
+			num[step]  = line[i];
+			printf("%s\n",  num);
+			step++;
+			bool = 1;
+		}
+		else if(isalpha(line[i]))
+		{
+			nodeid[strlenght] = line[i];
+			strlenght++;
 		}
 	}
-
-	return newNode;
+	
+	
+	
 };
 
 Node * addEdges(char * line,int NodeNum, Node * nodes)
@@ -79,7 +112,7 @@ Node * addEdges(char * line,int NodeNum, Node * nodes)
 	}
 	for(i = 0; i < NodeNum; i+=2)
 	{
-		if( nodes[i].id == newPath.From)
+		if(strcmp(nodes[i].id,&newPath.From) == 0)
 		{
 			int paths = 1;
 			
@@ -88,7 +121,7 @@ Node * addEdges(char * line,int NodeNum, Node * nodes)
 			int j = 0;
 			for(j = 0; j < nodes[i].numPaths; j++)
 			{
-				 edgeArr[j] = nodes[i].paths[j];
+				edgeArr[j] = nodes[i].paths[j];
 			}
 			edgeArr[paths-1] = newPath;
 
@@ -124,43 +157,47 @@ void loadFile()
 	int step = 0;
 	Path * paths;
 	int totalpaths = 0;
-	Node * nodes;
+	
 	FILE* data = fopen("test.txt", "rt");
+	
+	
+	if(number == 0 && fgets(line, 100, data) != NULL)
+	{
+		number = atoi(&line[0]);
+	}
+	Node nodes[number];
 	while(fgets(line, 100, data) != NULL)
 	{
+
 		if(strncmp(line, "NODES", 5) == 0 ||  strncmp(line, "EDGES", 5) == 0 || strncmp(line, "PATHS", 5) == 0 )
 		{
-			 strcpy(mode, line);
+			strcpy(mode, line);
 		}
 		else if(strncmp(mode, "NODES", 5) ==0)
 		{
-			nodes[step] = createNode(line);
+			
+			createNode(line,&nodes[step]);
 			step++;
 		}
 		else if(strncmp(mode, "EDGES", 5) == 0)
 		{
-			nodes = addEdges(line,step,nodes);
+			//nodes = addEdges(line,step,nodes);
 		}
 		else if(strncmp(mode, "PATHS", 5) == 0)
 		{
 			
-			Path pathArr[totalpaths+1];
-			Path newPath = createPath(line);
-			int j = 0;
-			for(j = 0; j < totalpaths; j++)
-			{
-				 pathArr[j] = paths[j];
-			}
-			totalpaths++;
-			pathArr[totalpaths] = newPath;
-			paths =  pathArr;
+		//  Path pathArr[totalpaths+1];
+		//	Path newPath = createPath(line);
+		//	int j = 0;
+		//	for(j = 0; j < totalpaths; j++)
+		//	{
+		//		 pathArr[j] = paths[j];
+		//	}
+		//	totalpaths++;
+		//	pathArr[totalpaths] = newPath;
+		//	paths =  pathArr;
 		}
-		else if(number == 0)
-		{
-			number = atoi(&line[0]);
-			Node temp[number];
-			nodes = temp;
-		}
+		
 	}
 	
 };
