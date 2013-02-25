@@ -10,9 +10,9 @@ typedef struct
 
 typedef struct
 {
-	char From;
-	char to;
-	int cost;
+	char * From;
+	char * To;
+	int weight;
 }Edges;
 
 typedef struct 
@@ -76,7 +76,6 @@ void createNode(char * line, Node * newNode)
 		else if(isdigit(line[i]))
 		{
 			num[step]  = line[i];
-			printf("%s\n",  num);
 			step++;
 			bool = 1;
 		}
@@ -85,52 +84,64 @@ void createNode(char * line, Node * newNode)
 			nodeid[strlenght] = line[i];
 			strlenght++;
 		}
-	}
-	
-	
-	
+	}	
 };
 
-Node * addEdges(char * line,int NodeNum, Node * nodes)
+void addEdges(char * line,int NodeNum, Node * nodes)
 {
 	Edges newPath; 
 	int i = 0;
-	for(i = 0; i < 5; i+=2)
+	int bool_secoundId = 0;
+	int boolId = 0;
+	char newId[100];
+	char num[100];
+	int step = 0;
+	int numSize = 0;
+	for(i = 0; i < strlen(line); i++)
 	{
-		if(i == 0)
+		if(isalpha(line[i]))
 		{
-			newPath.From = line[i];
+			newId[step] = line[i];
+		
+			step++;
+			boolId = 1;
 		}
-		else if(i == 2)
+		else if(isdigit(line[i]))
 		{
-			newPath.to = line[i];
+			num[numSize] = line[i];
+			numSize++;
+			boolId = 0;
 		}
-		else if(i == 4)
+		else if(isspace(line[i]))
 		{
-			newPath.cost = atoi(&line[i]);
-		}
-	}
-	for(i = 0; i < NodeNum; i+=2)
-	{
-		if(strcmp(nodes[i].id,&newPath.From) == 0)
-		{
-			int paths = 1;
-			
-			paths = paths + nodes[i].numPaths;
-			Edges edgeArr[paths];
-			int j = 0;
-			for(j = 0; j < nodes[i].numPaths; j++)
+			if(boolId == 1)
 			{
-				edgeArr[j] = nodes[i].paths[j];
+				if(bool_secoundId == 0)
+				{
+					strncpy(newPath.From,newId,step);
+					step = 0;
+					bool_secoundId =1;
+				}
+				else if(bool_secoundId == 1)
+				{
+					printf("%s\n", newId);
+					strncpy(newPath.To,newId,step);
+					printf("%s\n", newPath.To);
+					
+				}
+				step = 0;
+				newId[0] = '\0';
 			}
-			edgeArr[paths-1] = newPath;
-
-			nodes[i].numPaths++;
-			
-			nodes[i].paths = edgeArr;
+			else if(boolId == 0)
+			{
+				newPath.weight = atoi(num);
+			}
 		}
 	}
-	return  nodes;
+	printf("%s\n", "////////////////");
+	///printf("%s\n", newPath.From);
+	///printf("%i\n", newPath.weight);
+	printf("%s\n", "////////////////");
 };
 Path createPath(char * line)
 {
@@ -181,7 +192,7 @@ void loadFile()
 		}
 		else if(strncmp(mode, "EDGES", 5) == 0)
 		{
-			//nodes = addEdges(line,step,nodes);
+			addEdges(line,step,nodes);
 		}
 		else if(strncmp(mode, "PATHS", 5) == 0)
 		{
