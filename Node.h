@@ -10,11 +10,11 @@ typedef struct
 
 typedef struct
 {
-	char * From;
-	char * To;
+	char To[100];
+	char From[100];
 	int weight;
-}Edges;
 
+}Edges;
 typedef struct 
 {
 	int x;
@@ -34,142 +34,105 @@ void createNode(char * line, Node * newNode)
 	int bool = 0;
 	int j = 0;
 	
-	for(j = 0; j <= 100; j++)
+	char * p = strtok(line," ");
+	while (p != NULL)
 	{
-		nodeid[j] = ' ';
-		num[j] = ' ';
-		newNode->id[j] = ' ';
-	}
-	int i = 0;
-	for(i = 0; i < strlen(line); i++)
-	{
-		if(isspace(line[i]))
-		{
 		
-			if(bool == 1) 
+		if(isdigit(p[0]))
+		{
+			int cordNum = atoi(p);
+			if(boolX == 1)
 			{
-				int cordNum = atoi(num);
-				if(boolX == 1)
-				{
-					newNode->y = cordNum;
-					boolX = 0;
-				}
-				else
-				{
-					newNode->x = cordNum;
-					boolX = 1;
-					for(j = 0; j <= step; j++)
-					{
-						num[j] = ' ';
-					}
-				}
-				bool = 0;
+				newNode->y = cordNum;
+				boolX = 0;
 			}
 			else
 			{
-				
-				strncpy(newNode->id,nodeid,strlenght);
-				strlenght = 0;
+				newNode->x = cordNum;
+				boolX = 1;
+				num[0] = '\0';
 			}
-			step = 0;
 		}
-		else if(isdigit(line[i]))
+		else if(isalpha(p[0]))
 		{
-			num[step]  = line[i];
-			step++;
-			bool = 1;
+			strcpy(newNode->id,p);
 		}
-		else if(isalpha(line[i]))
-		{
-			nodeid[strlenght] = line[i];
-			strlenght++;
-		}
+		p = strtok (NULL," ");
 	}	
 };
 
-void addEdges(char * line,int NodeNum, Node * nodes)
+void addEdges(char * line, Node * nodes,Edges * newPath)
 {
-	Edges newPath; 
+	
 	int i = 0;
 	int bool_secoundId = 0;
 	int boolId = 0;
+	
 	char newId[100];
 	char num[100];
 	int step = 0;
 	int numSize = 0;
-	for(i = 0; i < strlen(line); i++)
+	step = 0;
+	newId[0] = '\0';
+	char * token;
+	int boolStep = 0;;
+	char * p = strtok(line," ");
+	while (p != NULL)
 	{
-		if(isalpha(line[i]))
+		if( boolStep == 0)
 		{
-			newId[step] = line[i];
-		
-			step++;
-			boolId = 1;
+			int i =0;
+			strcpy(newPath->From,p );
+			boolStep = 1;
 		}
-		else if(isdigit(line[i]))
+		else if(boolStep == 1)
 		{
-			num[numSize] = line[i];
-			numSize++;
-			boolId = 0;
+			strcpy(newPath->To,p );
+			boolStep = 2;
 		}
-		else if(isspace(line[i]))
+		else if( boolStep == 2)
 		{
-			if(boolId == 1)
-			{
-				if(bool_secoundId == 0)
-				{
-					strncpy(newPath.From,newId,step);
-					step = 0;
-					bool_secoundId =1;
-				}
-				else if(bool_secoundId == 1)
-				{
-					printf("%s\n", newId);
-					strncpy(newPath.To,newId,step);
-					printf("%s\n", newPath.To);
-					
-				}
-				step = 0;
-				newId[0] = '\0';
-			}
-			else if(boolId == 0)
-			{
-				newPath.weight = atoi(num);
-			}
+			newPath->weight = atoi(p);
+			boolStep = 3;
 		}
+		p = strtok (NULL," ");
 	}
-	printf("%s\n", "////////////////");
-	///printf("%s\n", newPath.From);
-	///printf("%i\n", newPath.weight);
-	printf("%s\n", "////////////////");
 };
-Path createPath(char * line)
+Path createPath(char * line,Path * newPath)
 {
 	Path newPath;
-	int i = 0;
-	for(i = 0; i < 3; i=2)
+	char * p = strtok(line," ");
+	int bool = 0;
+	while (p != NULL)
 	{
-		if(i == 0)
+		if(bool == 0)
 		{
-			newPath.Start = line[i];
+			strcpy(newPath->Start,p);
+			bool = 1;
 		}
-		else if(i == 2)
+		else if(bool == 1)
 		{
-			newPath.Finish = line[i];
+			strcpy(newPath->Finish,p);
+			bool = 0;
 		}
-		
+		p = strtok (NULL," ");
 	}
 }
 void loadFile()
 {
 	char line[100];
 	char mode[100];
+
+	Edges newEdge[100];
+	Path paths[100];
 	int number = 0;
 	int step = 0;
+	int numEdges = 0;
+	int numPaths = 0;
 	Path * paths;
 	int totalpaths = 0;
-	
-	FILE* data = fopen("test.txt", "rt");
+	Edges p;
+	FILE * data = fopen("test.txt", "rt");
 	
 	
 	if(number == 0 && fgets(line, 100, data) != NULL)
@@ -186,27 +149,19 @@ void loadFile()
 		}
 		else if(strncmp(mode, "NODES", 5) ==0)
 		{
-			
 			createNode(line,&nodes[step]);
 			step++;
 		}
 		else if(strncmp(mode, "EDGES", 5) == 0)
 		{
-			addEdges(line,step,nodes);
+			addEdges(line,nodes,&newEdge[numEdges]);
+			numEdges++;
 		}
 		else if(strncmp(mode, "PATHS", 5) == 0)
 		{
-			
-		//  Path pathArr[totalpaths+1];
-		//	Path newPath = createPath(line);
-		//	int j = 0;
-		//	for(j = 0; j < totalpaths; j++)
-		//	{
-		//		 pathArr[j] = paths[j];
-		//	}
-		//	totalpaths++;
-		//	pathArr[totalpaths] = newPath;
-		//	paths =  pathArr;
+			createPath(line,&paths[totalpaths]);
+			totalpaths++;
+		
 		}
 		
 	}

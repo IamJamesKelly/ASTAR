@@ -2,7 +2,7 @@
 NODES
 a 12 13
 b 2 54
-c 72 2
+c 72 20
 d 14 9
 e 20 2
 EDGES
@@ -12,4 +12,4 @@ b e 1
 a c 5
 PATHS
 a e
-b c
+b c                                                                                          	
