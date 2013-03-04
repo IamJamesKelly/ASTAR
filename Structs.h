@@ -22,13 +22,15 @@ struct Node{
 	char id[100];
 	int numPaths;
 	int * edgesNum;
+	int boolSearched = 0;
 	Node ** pNodes;
 };
 
 typedef struct 
 {
-	Node ** nodePath;
-	int lenght;
+	Node ** nodes;
+	char onid[100];
+	int pathLenght;
 	int cost;
 }Path;
 

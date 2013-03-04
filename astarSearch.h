@@ -3,6 +3,7 @@
 #include <stdio.h> 
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 #include <ctype.h>
 #include "Structs.h"
 Node * findNode(Node * nodes, char * id,int arrsize)
@@ -21,12 +22,68 @@ Node * findNode(Node * nodes, char * id,int arrsize)
 void FindPath(char * target,Node * node)
 {
 	int i = 0;
-	for(i = 0; i < node->numPaths;i++)
+	int j = 0;
+	int PathFound = 0;
+	
+	Path * paths = malloc(sizeof(Path));
+
+	int paths = 1;
+	paths[0].nodes[0] = node;
+	paths[0].cost = 0;
+	paths[0].pathLenght = 1;
+	paths[0].boolSearched = 1;
+	while(PathFound == 0)
 	{
+		for(i = 0; i < paths->nodes[j]->numPaths;i++)
+		{
+			paths = realloc(paths,(paths * sizeof(Path)));
+		}
+	}
+};
+void addPath(Path * paths,int * pathslenght,Path newPath)
+{
+
+	
+}
+Path searchPaths(Path * paths,int * pathslenght,Path newPath)
+{
+
+	int i = 0;
+	for(i = 0; i < *pathslenght;i++)
+	{
+		if(srtcmp(paths[i].onid,newPath.onid) == 0 && paths[i].cost > newPath.cost)
+		{
+			paths[i] = newPath;
+			newPath = paths[i];
+		}
+		else if(srtcmp(paths[i].onid,newPath.onid) != 0)
+		{
+			*pathslenght++;
+			paths[(*pathslenght)-1] = newPath;
+		}
 
 	}
 
+	paths = realloc(paths,(*pathslenght * sizeof(Path)));
+
 };
+int moveCost(Node * parent,int nodeMove)
+{
+	int x,y,cost;
+	x = parent->pNodes[nodeMove].x - parent->x;
+	y = parent->pNodes[nodeMove].y - parent->y;
+	if(x < 0){
+		x = x *-1;
+	}
+	if(y < 0){ 
+		y = y *-1;
+	}
+	x = x*x;
+	y = y*y;
+	cost = sqrt(x + y) * parent->edgesNum[nodeMove];
+
+	return cost;
+}
 void astarSearch(Target * target,Node * nodes,Edges * edg,int edgNum,int nodeNum, int PathsToSerch)
 {
 
