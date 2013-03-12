@@ -17,6 +17,9 @@ void createNode(char * line, Node * newNode)
 	char * p = strtok(line," ");
 	while (p != NULL)
 	{
+		int len = strlen(p);
+		if(p[len-1] == '\n' )
+		   p[len-1] = 0;
 		
 		if(isdigit(p[0]))
 		{
@@ -60,6 +63,10 @@ void createEdge(char * line,Edges * newTarget)
 	char * p = strtok(line," ");
 	while (p != NULL)
 	{
+		int len = strlen(p);
+		if(p[len-1] == '\n' )
+		   p[len-1] = 0;
+
 		if( boolStep == 0)
 		{
 			int i = 0;
@@ -81,10 +88,18 @@ void createEdge(char * line,Edges * newTarget)
 };
 Target createTarget(char * line,Target * newTarget)
 {
-	char * p = strtok(line," ");
+	char * p = strtok(line," \n");
+	char ptr[strlen(p)+1];
+	int i,j=0;
+	
 	int bool = 0;
+	char temp;
 	while (p != NULL)
 	{
+		int len = strlen(p);
+		if(p[len-1] == '\n' )
+		   p[len-1] = 0;
+		
 		if(bool == 0)
 		{
 			strcpy(newTarget->Start,p);
@@ -95,10 +110,11 @@ Target createTarget(char * line,Target * newTarget)
 			strcpy(newTarget->Finish,p);
 			bool = 0;
 		}
-		p = strtok (NULL," ");
+
+		p = strtok(NULL," \n");
 	}
-}
-void loadFile(Node * nodes, FILE * data,Target * Targets,Edges * p,int * numEdges,int * PathsToSerch)
+};
+void loadFile(Node * nodes, FILE * data,Target * targets,Edges * p,int * numEdges,int * PathsToSerch)
 {
 	char line[100];
 	char mode[100];
@@ -126,8 +142,7 @@ void loadFile(Node * nodes, FILE * data,Target * Targets,Edges * p,int * numEdge
 		else if(strncmp(mode, "PATHS", 5) == 0)
 		{
 			(*PathsToSerch)++;
-			Targets = realloc(Targets, (*PathsToSerch)*sizeof(Target));
-			createTarget(line,&Targets[(*PathsToSerch) -1]);
+			createTarget(line,&targets[(*PathsToSerch)-1]);
 		}
 	}
 };

@@ -22,7 +22,7 @@ struct Node{
 	char id[100];
 	int numPaths;
 	int * edgesNum;
-	int boolSearched = 0;
+	int boolSearched;
 	Node ** pNodes;
 };
 

@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-I.
+CFLAGS=-I. -lm
 APP=ASTAR
 
 build: main.o

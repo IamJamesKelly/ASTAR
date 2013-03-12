@@ -13,7 +13,7 @@ int main( int argc, const char* argv[])
 	int numEdges = 0;
 
 	char line[100];
-	Target * tagets = malloc(sizeof(Target));
+	Target targets[100];
 	FILE * data = fopen("test.txt", "rt");
 
 	if(nodeSize == 0 && fgets(line, 100, data) != NULL)
@@ -25,7 +25,7 @@ int main( int argc, const char* argv[])
 	Edges * ed = malloc(sizeof(Edges));
 	
 
-	loadFile(nodes,data,tagets,ed,&numEdges,&PathsToSerch);
-	astarSearch(tagets,nodes,ed,numEdges,nodeSize,PathsToSerch);
+	loadFile(nodes,data,targets,ed,&numEdges,&PathsToSerch);
+	astarSearch(targets,nodes,ed,numEdges,nodeSize,PathsToSerch);
 
 };
